@@ -43,7 +43,7 @@ def main(config):
 
     # build model architecture, then print to console
     model = config.init_obj('model', module_model)
-    
+        
     # get function handles of loss and metrics
     if len(config['loss']['args'])>0:
         print('... loading weighted loss params ...')
