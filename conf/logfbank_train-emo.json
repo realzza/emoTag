@@ -1,0 +1,112 @@
+{
+    "name": "vox1", 
+    "seed": 4,
+    "GPUtil": {
+        "type": "getAvailable",
+        "args": {
+            "limit": 500,
+            "maxMemory": 0.4,
+            "maxLoad": 0.1
+        }
+    },
+    "trainer": {
+        "epochs": 1000, 
+        "early_stop": 500,
+        "log_step": 22,
+        "save_dir": "exp/",
+        "save_period": 1,
+        "verbosity": 1,
+        "monitor": "max valid_accuracy",
+        "tensorboard": false
+    }, 
+    "dataset": {
+        "type": "LogfbankDataset",
+        "args": {
+            "wav_scp": "../emo/index/train_utt2wav_h5",
+            "utt2label": "../emo/index/train_utt2label_h5",
+            "spk2int": "../emo/index/label2int.json",
+            "logfbank_kwargs":{
+                "winlen": 0.025,
+                "winstep": 0.01,
+                "nfilt": 256,
+                "nfft": 1024,
+                "lowfreq": 0,
+                "highfreq": null,
+                "preemph": 0.97
+            },
+            "padding": "wrap",
+            "cmn": true,
+            "tdur": 5,
+            "pad0": false
+        },
+        "valid_split": 0
+    },
+    "valid_dataset": {
+        "type": "LogfbankDataset",
+        "args": {
+            "wav_scp": "../emo/index/evaluation_utt2wav_h5",
+            "utt2label": "../emo/index/evaluation_utt2label_h5",
+            "spk2int": "../emo/index/label2int.json",
+            "logfbank_kwargs":{
+                "winlen": 0.025,
+                "winstep": 0.01,
+                "nfilt": 256,
+                "nfft": 1024,
+                "lowfreq": 0,
+                "highfreq": null,
+                "preemph": 0.97
+            },
+            "padding": "wrap",
+            "cmn": true,
+            "tdur": 3,
+            "pad0": false
+        },
+        "valid_split": 0
+    },
+    "dataloader": {
+        "type": "SimpleDataLoader",
+        "args": {
+            "batch_size": 128,
+            "shuffle": true,
+            "num_workers": 8,
+            "drop_last": false
+        }
+    },
+    "optimizer": {
+        "type": "SGD",
+        "args": {
+            "lr": 1e-2,
+            "momentum": 0.4,
+            "weight_decay": 1e-4
+        }
+    },
+    "lr_scheduler": {
+        "type": "CosineAnnealingLR",
+        "args": {
+            "T_max": 15,
+            "eta_min": 1e-8,
+            "verbose": true
+        }
+    },
+    "loss": {
+        "type": "CrossEntropyLoss",
+        "args": {}
+    },
+    "metrics": [
+        "accuracy",
+        "uar"
+    ], 
+    "model": {
+        "type": "Gvector",
+        "args": {
+            "channels": 8,
+            "block": "BasicBlock", 
+            "num_blocks": [
+                2,2,2,2
+            ],
+            "embd_dim": 1024,
+            "drop": 0.3, 
+            "n_class": 5
+        }
+    }
+}
