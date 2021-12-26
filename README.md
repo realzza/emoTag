@@ -1,13 +1,13 @@
 # emoTag
 emoTag helps you train emotion detection model for Chinese audios.
-### Environment
+## Environment
 ```bash
 pip install -r requirement.txt
 ```
-### Data
+## Data
 We used [Emotional Speech Dataset (ESD) for Speech Synthesis and Voice Conversion](https://github.com/HLTSingapore/Emotional-Speech-Data) from HLT Singapore.
 
-### Train Emotion Classifier
+## Train Emotion Classifier
 Use this command to train a classifier. Adjust training setups in `conf/logfbank_train-emo.json`.
 ```python
 python train.py --config conf/logfbank_train-emo.json --name task_trial_1
@@ -40,7 +40,7 @@ optional arguments:
   --pretrain PRETRAIN
 ```
 
-### Infer labels
+## Infer labels
 ```python
 python infer_label.py
 ```
