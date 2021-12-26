@@ -1,1 +1,5 @@
 index/.ipynb_checkpoints/
+.ipynb_checkpoints/
+utils/.ipynb_checkpoints/
+!conf/logfbank_train-emo.json
+utils/__pycache__/ 
