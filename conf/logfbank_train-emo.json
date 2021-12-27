@@ -22,9 +22,9 @@
     "dataset": {
         "type": "LogfbankDataset",
         "args": {
-            "wav_scp": "../emo/index/train_utt2wav_h5",
-            "utt2label": "../emo/index/train_utt2label_h5",
-            "spk2int": "../emo/index/label2int.json",
+            "wav_scp": "index/train_utt2wav_h5",
+            "utt2label": "index/train_utt2label_h5",
+            "spk2int": "index/label2int.json",
             "logfbank_kwargs":{
                 "winlen": 0.025,
                 "winstep": 0.01,
@@ -44,9 +44,9 @@
     "valid_dataset": {
         "type": "LogfbankDataset",
         "args": {
-            "wav_scp": "../emo/index/evaluation_utt2wav_h5",
-            "utt2label": "../emo/index/evaluation_utt2label_h5",
-            "spk2int": "../emo/index/label2int.json",
+            "wav_scp": "index/evaluation_utt2wav_h5",
+            "utt2label": "index/evaluation_utt2label_h5",
+            "spk2int": "index/label2int.json",
             "logfbank_kwargs":{
                 "winlen": 0.025,
                 "winstep": 0.01,
