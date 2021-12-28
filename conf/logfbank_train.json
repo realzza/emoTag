@@ -1,0 +1,112 @@
+{
+    "name": "vox1", 
+    "seed": 4,
+    "GPUtil": {
+        "type": "getAvailable",
+        "args": {
+            "limit": 4,
+            "maxMemory": 0.1,
+            "maxLoad": 0.1
+        }
+    },
+    "trainer": {
+        "epochs": 80, 
+        "early_stop": 30,
+        "log_step": 22,
+        "save_dir": "exp/",
+        "save_period": 5,
+        "verbosity": 1,
+        "monitor": "min valid_loss",
+        "tensorboard": false
+    }, 
+    "dataset": {
+        "type": "LogfbankDataset",
+        "args": {
+            "wav_scp": "index/train_utt2wav",
+            "utt2label": "index/train_utt2lab",
+            "spk2int": "index/label2int.json",
+            "logfbank_kwargs":{
+                "winlen": 0.025,
+                "winstep": 0.01,
+                "nfilt": 256,
+                "nfft": 1024,
+                "lowfreq": 0,
+                "highfreq": null,
+                "preemph": 0.97
+            },
+            "padding": "wrap",
+            "cmn": true,
+            "tdur": 5,
+            "pad0": false
+        },
+        "valid_split": 0
+    },
+    "valid_dataset": {
+        "type": "LogfbankDataset",
+        "args": {
+            "wav_scp": "index/devel_utt2wav",
+            "utt2label": "index/devel_utt2lab",
+            "spk2int": "index/label2int.json",
+            "logfbank_kwargs":{
+                "winlen": 0.025,
+                "winstep": 0.01,
+                "nfilt": 256,
+                "nfft": 1024,
+                "lowfreq": 0,
+                "highfreq": null,
+                "preemph": 0.97
+            },
+            "padding": "wrap",
+            "cmn": true,
+            "tdur": 5,
+            "pad0": false
+        },
+        "valid_split": 0
+    },
+    "dataloader": {
+        "type": "SimpleDataLoader",
+        "args": {
+            "batch_size": 128,
+            "shuffle": true,
+            "num_workers": 8,
+            "drop_last": false
+        }
+    },
+    "optimizer": {
+        "type": "SGD",
+        "args": {
+            "lr": 1e-2,
+            "momentum": 0.9,
+            "weight_decay": 1e-4
+        }
+    },
+    "lr_scheduler": {
+        "type": "ReduceLROnPlateau",
+        "args": {
+            "mode": "min",
+            "patience": 9,
+            "verbose": true
+        }
+    },
+    "loss": {
+        "type": "CrossEntropyLoss",
+        "args": {}
+    },
+    "metrics": [
+        "accuracy",
+        "uar"
+    ], 
+    "model": {
+        "type": "Gvector",
+        "args": {
+            "channels": 16,
+            "block": "BasicBlock", 
+            "num_blocks": [
+                2,2,2,2
+            ],
+            "embd_dim": 1024,
+            "drop": 0.3, 
+            "n_class": 7
+        }
+    }
+}
