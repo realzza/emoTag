@@ -47,7 +47,8 @@ python infer_label.py
 Adjust the `vad_file` param and code if necessary to adapt to new tasks. `infer_label.py` adopted multiprocessing, increased cpu utilities rate and inference efficiency. See usage details below.
 ```
 usage: infer_label.py [-h] [--vad_file VAD_FILE] [--model_dir MODEL_DIR]
-                      [--output_dir OUTPUT_DIR]
+                      [--data_dir DATA_DIR] [--output_dir OUTPUT_DIR]
+                      [--process PROCESS]
 
 parse model info
 
@@ -55,5 +56,12 @@ optional arguments:
   -h, --help            show this help message and exit
   --vad_file VAD_FILE
   --model_dir MODEL_DIR
+  --data_dir DATA_DIR   data directory to be labelled
   --output_dir OUTPUT_DIR
+  --process PROCESS     multiprocess number
 ```
+`infer_label.py` automatically generates `kill_label.sh` script while running. Kill multiprocess labeling program simply by
+```bash
+bash kill_label.sh
+```
+Find inference failure log in `bad_file`.
