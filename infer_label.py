@@ -17,6 +17,7 @@ def parse_args():
     parser.add_argument('--model_dir', type=str, default='exp/emo_resnet18_cosine_T20/chkpt/chkpt_best.pth')
     parser.add_argument('--data_dir', type=str, default="/NASdata/Teamwork-clip-audio/", help="data directory to be labelled")
     parser.add_argument('--output_dir', type=str, default="./labels/")
+    parser.add_argument('--process', type=int, default=4, help="multiprocess number")
     return parser.parse_args()
 
 # config (please keep the same settings with `conf/logfbank_train-emo.json`)
@@ -80,6 +81,7 @@ class SVExtractor():
 def labeling(iii, args):
     isFirst = True
     
+    pTotal = args.process
     model_dir = args.model_dir
     vad_path = args.vad_file
     output_dir = args.output_dir.rstrip('/') + '/'
@@ -109,18 +111,16 @@ def labeling(iii, args):
     vad_result = {}
     for rec in recorders:
         all_recordings += [recording_dir+rec+'/'+r for r in os.listdir(recording_dir+rec) if r.endswith('.wav')]
-    portion = len(all_recordings) // 4
-    if i == 0:
+    portion = len(all_recordings) // pTotal
+    if iii == 0:
         all_recordings = all_recordings[:portion]
-    elif i == 1:
-        all_recordings = all_recordings[portion:portion*2]
-    elif i == 2:
-        all_recordings = all_recordings[portion*2: portion*3]
-    elif i == 3:
-        all_recordings = all_recordings[portion*3:]
+    elif iii == pTotal - 1:
+        all_recordings = all_recordings[portion*iii:]
+    else:
+        all_recordings = all_recordings[portion*iii: portion*(iii+1)]
     
     # label the assigned portion
-    for rcd in tqdm(all_recordings[:2], desc="process_%d"%os.getpid()):
+    for rcd in tqdm(all_recordings, desc="process_%d"%os.getpid()):
         if isFirst:
             with open('kill_label.sh','a') as f:
                 f.write('kill -9 %d\n'%os.getpid())
@@ -164,7 +164,7 @@ if __name__ == "__main__":
     args = parse_args()
     
     from multiprocessing import Process
-    worker_count = 4
+    worker_count = args.process
     worker_pool = []
     for i in range(worker_count):
         p = Process(target=labeling, args=(i, args))
