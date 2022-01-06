@@ -82,8 +82,8 @@ def labeling(iii, args):
     
     model_dir = args.model_dir
     vad_path = args.vad_file
-    output_dir = args.output_dir.strip('/') + '/'
-    recording_dir = args.data_dir.strip('/') + '/'
+    output_dir = args.output_dir.rstrip('/') + '/'
+    recording_dir = args.data_dir.rstrip('/') + '/'
     
     if not os.path.isdir(output_dir):
         os.mkdir(output_dir)
