@@ -3,3 +3,5 @@ index/.ipynb_checkpoints/
 utils/.ipynb_checkpoints/
 !conf/logfbank_train-emo.json
 utils/__pycache__/ 
+kill_label.sh
+bad_file
