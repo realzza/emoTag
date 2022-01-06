@@ -120,7 +120,7 @@ def labeling(iii, args):
         all_recordings = all_recordings[portion*3:]
     
     # label the assigned portion
-    for rcd in tqdm(all_recordings, desc="process_%d"%os.getpid()):
+    for rcd in tqdm(all_recordings[:2], desc="process_%d"%os.getpid()):
         if isFirst:
             with open('kill_label.sh','a') as f:
                 f.write('kill -9 %d\n'%os.getpid())
@@ -148,7 +148,8 @@ def labeling(iii, args):
                         vad_result[rcd.split('/')[-1]]["(%.4f, %.4f)"%(curr_start, curr_start+5)] = dict(zip(list(identi.values()), probs))
                         curr_start += 1
         except:
-            print("** bad file ** %s"%rcd)
+            with open('bad_file','a') as f:
+                f.write(os.path.abspath(rcd)+'\n')
     
     with open(output_dir + 'recording_labels_process%d.json'%iii, 'w') as f:
         json.dump(vad_result, f)
@@ -156,6 +157,8 @@ def labeling(iii, args):
 
 if __name__ == "__main__":
     with open('kill_label.sh','w') as f:
+        f.write('')
+    with open('bad_file', 'w') as f:
         f.write('')
     
     args = parse_args()
