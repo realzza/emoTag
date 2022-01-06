@@ -128,9 +128,8 @@ def labeling(iii, args):
             
         if not rcd.split('/')[-1] in vad_result:
             vad_result[rcd.split('/')[-1]] = {}
-#         rcd_path = recording_dir + recorder + '/' + rcd
-        rcd_data, sr = librosa.load(rcd, sr=16000)
         try:
+            rcd_data, sr = librosa.load(rcd, sr=16000)
             rcd_voiced = voiced_part[rcd.split('/')[-1]]
             for (start_time, end_time) in rcd_voiced:
                 if end_time - start_time <= 5:
@@ -151,7 +150,7 @@ def labeling(iii, args):
             with open('bad_file','a') as f:
                 f.write(os.path.abspath(rcd)+'\n')
     
-    with open(output_dir + 'recording_labels_process%d.json'%iii, 'w') as f:
+    with open(output_dir + 'rest_labels_process%d.json'%iii, 'w') as f:
         json.dump(vad_result, f)
     
 
