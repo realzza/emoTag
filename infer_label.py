@@ -15,6 +15,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description=desc)
     parser.add_argument('--vad_file', type=str, default="/Netdata/2018/wangwq/workspace/DeepSpeaker/egs/DiaPIPE/egs/voxconverse/affinity/sp_lstm_rotate/exp/pyr/subsegments_1.28_0.64/results/pred_rttm_100")
     parser.add_argument('--model_dir', type=str, default='exp/emo_resnet18_cosine_T20/chkpt/chkpt_best.pth')
+    parser.add_argument('--data_dir', type=str, default="/NASdata/Teamwork-clip-audio/", help="data directory to be labelled")
     parser.add_argument('--output_dir', type=str, default="./labels/")
     return parser.parse_args()
 
@@ -76,13 +77,14 @@ class SVExtractor():
         rslt = rslt.squeeze(0).cpu().numpy()
         return embd, rslt
 
-def labeling(iii):
+def labeling(iii, args):
+    isFirst = True
     
-    
-    args = parse_args()
     model_dir = args.model_dir
     vad_path = args.vad_file
     output_dir = args.output_dir.strip('/') + '/'
+    recording_dir = args.datadir.strip('/') + '/'
+    
     if not os.path.isdir(output_dir):
         os.mkdir(output_dir)
     sv_extractor = SVExtractor(mdl_kwargs, fbank_kwargs, model_dir, device='cpu')
@@ -102,7 +104,6 @@ def labeling(iii):
             voiced_part[line_info[1]] = []
         voiced_part[line_info[1]].append((start_time, end_time))
     
-    recording_dir = "/NASdata/Teamwork-clip-audio/"
     recorders = os.listdir(recording_dir)
     all_recordings = []
     vad_result = {}
@@ -119,7 +120,12 @@ def labeling(iii):
         all_recordings = all_recordings[portion*3:]
     
     # label the assigned portion
-    for rcd in tqdm(all_recordings, desc="process_%d"%iii):
+    for rcd in tqdm(all_recordings, desc="process_%d"%os.getpid()):
+        if isFirst:
+            with open('kill_label.sh','a') as f:
+                f.write('kill -9 %d\n'%os.getpid())
+            isFirst = False
+            
         if not rcd.split('/')[-1] in vad_result:
             vad_result[rcd.split('/')[-1]] = {}
 #         rcd_path = recording_dir + recorder + '/' + rcd
@@ -149,12 +155,16 @@ def labeling(iii):
     
 
 if __name__ == "__main__":
+    with open('kill_label.sh','w') as f:
+        f.write('')
+    
+    args = parse_args()
     
     from multiprocessing import Process
     worker_count = 4
     worker_pool = []
     for i in range(worker_count):
-        p = Process(target=labeling, args=(i,))
+        p = Process(target=labeling, args=(i, args))
         p.start()
         worker_pool.append(p)
     for p in worker_pool:
